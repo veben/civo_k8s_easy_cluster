@@ -25,9 +25,19 @@ civo region use FRA1
 > See: https://k9scli.io/topics/install/
 
 ### 3. kubectl
-> See: See: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+> See: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+
+### 4. Helm
+> See: https://helm.sh/docs/intro/install/
 
 ## II. Creation of the cluster
+- Define the API key
+> API key has to be recovered from Civo IHM
+```sh
+export CIVO_API_KEY=**********
+civo apikey add civo-key ${CIVO_API_KEY}
+civo apikey current civo-key
+```
 - Define cluster parameters as environment variables
 ```sh
 CLUSTER_NAME="civo-easy-cluster"
@@ -50,22 +60,23 @@ civo kubernetes create ${CLUSTER_NAME} \
 civo --region=${CLUSTER_REGION} kubernetes show ${CLUSTER_NAME}
 ```
 
-## III. Connection to the cluster with **K9s**
+## III. Configuration of kubectl and k9s
 - Create a directory to store the configuration file to connect to the cluster
 ```sh
 mkdir -p config
 ```
-- Recover the config of the cluster and store it in `k3s.yaml` file
+- Recover the config of the cluster and store it in `config.yaml` file
 ```sh
 civo --region=${CLUSTER_REGION} \
-kubernetes config ${CLUSTER_NAME} > ./config/k3s.yaml
+kubernetes config ${CLUSTER_NAME} > ./config/config.yaml
 ```
 - Configure `KUBECONFIG` environment variable to point on the config file
 ```sh
-export KUBECONFIG=$PWD/config/k3s.yaml
+export KUBECONFIG=$PWD/config/config.yaml
 ```
-- Launch k9s
+- Test **kubectl** and **k9s**
 ```sh
+kubectl get pod
 k9s --all-namespaces
 ```
 
@@ -86,20 +97,14 @@ curl `k get service | grep hello-node | awk '{print $4}'`:8080
 > NOW: 2024-04-05 13:34:52.750022158 +0000 UTC m=+282.238384456%
 
 ## V. Deployment of Mario Bros
-- Create the deployment
+- Clone the Mario Bros chart
 ```sh
-k apply -f k8s_mario/deployment.yaml
+git clone git@github.com:veben/helm_chart_mario_bros.git
 ```
-- Create the service
+- Deploy the game
 ```sh
-k apply -f k8s_mario/service.yaml
+helm install mario-bros helm_chart_mario_bros
 ```
-> Wait some second for the service to get an IP address
-- Recover the URL:port
-```sh
-echo `k get service | grep hello-node | awk '{print $4}'`:80
-```
-- Copy the result to a browser to access to the game
 
 ## Delete the cluster
 ```sh
