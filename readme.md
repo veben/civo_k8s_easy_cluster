@@ -96,15 +96,8 @@ curl `k get service | grep hello-node | awk '{print $4}'`:8080
 > I should send something like that:
 > NOW: 2024-04-05 13:34:52.750022158 +0000 UTC m=+282.238384456%
 
-## V. Deployment of Mario Bros
-- Clone the Mario Bros chart
-```sh
-git clone git@github.com:veben/helm_chart_mario_bros.git
-```
-- Deploy the game
-```sh
-helm install mario-bros helm_chart_mario_bros
-```
+## V. Deploy Mario Bros helm chart
+Find how to do it [here](https://github.com/veben/helm_charts/blob/main/README.md#3-deploy-mario-bros-helm-chart)
 
 ## Delete the cluster
 ```sh
